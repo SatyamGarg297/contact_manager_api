@@ -8,6 +8,8 @@ const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
+const authRoutes = require('./routes/authRoutes');
+app.use('/api/auth', authRoutes);
 
 
 connectDB()
