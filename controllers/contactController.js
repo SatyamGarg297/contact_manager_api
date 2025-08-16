@@ -103,12 +103,19 @@ const updateContact = async (req, res) => {
     const contactData = req.body;
 
     const contact = await ContactModel.findById(contactId);
-    if(!contact) {
-        return res.status(404).json({ success: false, message: "Contact not found" })
+    if (!contact) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Contact not found" });
     }
 
-    if(contact.userId.toString() !== req.userId) {
-        return res.status(403).json({ success:false, message: "Not authorized to update this contact" });
+    if (contact.userId.toString() !== req.userId) {
+      return res
+        .status(403)
+        .json({
+          success: false,
+          message: "Not authorized to update this contact",
+        });
     }
 
     const contactUpdated = await ContactModel.findByIdAndUpdate(
@@ -121,17 +128,47 @@ const updateContact = async (req, res) => {
     );
 
     console.log("contact updated successfully");
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "contact updated successfully",
-        contactUpdated: contactUpdated,
-      });
+    res.status(200).json({
+      success: true,
+      message: "contact updated successfully",
+      contactUpdated: contactUpdated,
+    });
   } catch (err) {
     console.error("Error updating contact: ", err.message);
     res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 };
 
-module.exports = { createContact, getContacts, getContactById, updateContact };
+const deleteContact = async (req, res) => {
+  try {
+    const contactId = req.params.id;
+
+    const contact = await ContactModel.findById(contactId);
+
+    if (!contact) {
+      return res
+        .status(404)
+        .json({ success: false, message: "contact not found" });
+    }
+    if (contact.userId.toString() !== req.userId) {
+      return res
+        .status(403)
+        .json({
+          success: false,
+          message: "Not authorized to delete this contact",
+        });
+    }
+
+    await contact.deleteOne();
+    console.log("contact deleted successfully");
+    
+    res
+      .status(200)
+      .json({ success: true, message: "contact deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting contact: ", err.message);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+};
+
+module.exports = { createContact, getContacts, getContactById, updateContact, deleteContact };
