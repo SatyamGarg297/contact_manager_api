@@ -67,14 +67,6 @@ const getContactById = async (req, res) => {
   try {
     const contactId = req.params.id;
 
-    // Validate objectId format
-    if (!mongoose.Types.ObjectId.isValid(contactId)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid contact ID formate",
-      });
-    }
-
     const getContact = await ContactModel.findOne({
       _id: contactId,
       userId: req.userId,
