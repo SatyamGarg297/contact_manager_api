@@ -3,11 +3,13 @@ require("dotenv").config();
 const connectDB = require("./config/db");
 const bodyParser = require("body-parser");
 const protect = require('./middleware/authMiddleware');
+const apiLimiter = require('./middleware/rateLimiter');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
+app.use('/api', apiLimiter);
 
 const contactRoutes = require('./routes/contactRoutes');
 const authRoutes = require('./routes/authRoutes');
